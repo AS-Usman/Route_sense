@@ -613,22 +613,26 @@ def api_delete_shipment(identifier):
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_frontend(path):
-    # Pass through API and specific backend routes
-    api_prefixes = ['api/', 'predict', 'shipments', 'login', 'register', 'logout', 'profile']
-    if any(path == p or path.startswith(p) for p in api_prefixes):
-        return jsonify({"error": "Resource or endpoint not found"}), 404
-
     if os.path.exists(DIST_DIR):
-        # 1. Exact file match (e.g., assets/main.js, style.css, favicon.ico)
+        # 1. Exact file match (e.g., predictor.html, shipments.html, assets/main.js, favicon.ico)
         candidate = os.path.join(DIST_DIR, path)
         if path and os.path.exists(candidate) and not os.path.isdir(candidate):
             return send_from_directory(DIST_DIR, path)
 
-        # 2. Page without .html extension (e.g. /predictor -> predictor.html)
+        # 2. Page without .html extension (e.g. /predictor -> predictor.html, /shipments -> shipments.html)
         if path and os.path.exists(candidate + '.html'):
             return send_from_directory(DIST_DIR, path + '.html')
 
-        # 3. Default to index.html for SPA/root navigation
+        # 3. Root route
+        if not path:
+            return send_from_directory(DIST_DIR, 'index.html')
+
+    # Specific API 404 handler for missing backend endpoints
+    if path.startswith('api/') or path in ['predict', 'login', 'register', 'logout', 'profile']:
+        return jsonify({"error": "Resource or endpoint not found"}), 404
+
+    # Fallback to index.html for SPA routing if dist exists
+    if os.path.exists(DIST_DIR):
         return send_from_directory(DIST_DIR, 'index.html')
 
     return jsonify({

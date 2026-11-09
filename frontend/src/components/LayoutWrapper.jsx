@@ -8,6 +8,7 @@ import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
 import { Footer } from './Footer';
 import { ToastContainer } from './Toast';
+import { ScrollProgressBar } from './ScrollProgressBar';
 
 const DEFAULT_SHIPMENTS = [
   {
@@ -176,6 +177,7 @@ export function LayoutWrapper({ children }) {
 
   return (
     <div className="min-h-screen bg-[#FFF7ED] text-stone-900 font-sans antialiased selection:bg-orange-500/30 selection:text-orange-900 flex flex-col justify-between">
+      <ScrollProgressBar />
       <Navbar
         theme={theme}
         toggleTheme={toggleTheme}
