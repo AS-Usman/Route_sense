@@ -29,6 +29,7 @@ COPY evaluation_metrics.json /app/evaluation_metrics.json
 
 # Copy compiled frontend from Stage 1 into frontend/dist
 COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist
+COPY --from=frontend-builder /app/frontend/dist /app/backend/python-flask/frontend/dist
 
 ENV PORT=5000
 ENV FLASK_ENV=production
