@@ -1,6 +1,7 @@
 import React from 'react';
 import { LayoutWrapper } from './components/LayoutWrapper';
 import { Hero } from './components/Hero';
+import { HowItWorksSection } from './components/HowItWorksSection';
 import { OperationsDashboard } from './components/OperationsDashboard';
 import { ShipmentRiskForm } from './components/ShipmentRiskForm';
 import { InteractiveRouteMap } from './components/InteractiveRouteMap';
@@ -15,10 +16,13 @@ export function App() {
     <LayoutWrapper>
       {({ shipments, handleSaveShipment, handleDeleteShipment, addToast }) => (
         <div className="space-y-12">
-          {/* Section 3: Hero */}
+          {/* Section 1: Hero */}
           <Hero />
 
-          {/* Section 5: Operations Dashboard */}
+          {/* Section 2: How It Works */}
+          <HowItWorksSection />
+
+          {/* Section 3: Operations Dashboard */}
           <OperationsDashboard 
             shipments={shipments} 
             onDeleteShipment={handleDeleteShipment} 
