@@ -13,4 +13,6 @@ services:
         generateValue: true
       - key: CORS_ALLOW_ALL
         value: "true"
+      - key: DATABASE_URL
+        sync: false
 
