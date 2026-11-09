@@ -155,8 +155,9 @@ def execute_prediction(data):
                 cursor.execute("""
                     INSERT INTO predictions (shipment_id, predicted_risk, prediction_confidence)
                     VALUES (%s, %s, %s)
+                    RETURNING id
                 """, (target_id, prediction["predicted_risk"], prediction["confidence_score"]))
-                prediction_id = cursor.lastrowid
+                prediction_id = cursor.fetchone()[0]
                 persisted = True
 
             cursor.close()
@@ -279,9 +280,9 @@ def register():
         connection = get_db_connection()
         cursor = connection.cursor()
 
-        query = "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
+        query = "INSERT INTO users (username, password_hash) VALUES (%s, %s) RETURNING id"
         cursor.execute(query, (username_clean, password_hash))
-        inserted_id = cursor.lastrowid
+        inserted_id = cursor.fetchone()[0]
 
         cursor.close()
         connection.close()
@@ -293,7 +294,7 @@ def register():
         }), 201
 
     except (DBError, Exception) as e:
-        if "Duplicate entry" in str(e) or "UNIQUE constraint" in str(e) or getattr(e, 'errno', None) == 1062:
+        if "Duplicate entry" in str(e) or "UNIQUE constraint" in str(e) or "duplicate key" in str(e) or getattr(e, 'errno', None) == 1062:
             return jsonify({"error": f"Username '{username_clean}' already exists"}), 409
         return jsonify({"error": "Database error", "details": str(e)}), 500
 
@@ -401,9 +402,10 @@ def create_shipment():
             INSERT INTO shipments 
             (shipment_id, origin, destination, distance, weather, route_risk, delivery_status, delay_days)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
         """
         cursor.execute(query, (shipment_id, origin, destination, distance, weather, route_risk, delivery_status, delay_days))
-        inserted_id = cursor.lastrowid
+        inserted_id = cursor.fetchone()[0]
 
         # Retrieve created record
         cursor.execute("""
@@ -421,7 +423,7 @@ def create_shipment():
         }), 201
 
     except (DBError, Exception) as e:
-        if "Duplicate entry" in str(e) or "UNIQUE constraint" in str(e) or getattr(e, 'errno', None) == 1062:
+        if "Duplicate entry" in str(e) or "UNIQUE constraint" in str(e) or "duplicate key" in str(e) or getattr(e, 'errno', None) == 1062:
             return jsonify({"error": f"Shipment ID '{data.get('shipment_id')}' already exists"}), 400
         return jsonify({"error": "Database error", "details": str(e)}), 500
     except ValueError as e:
@@ -541,7 +543,7 @@ def update_shipment(identifier):
         }), 200
 
     except (DBError, Exception) as e:
-        if "Duplicate entry" in str(e) or "UNIQUE constraint" in str(e) or getattr(e, 'errno', None) == 1062:
+        if "Duplicate entry" in str(e) or "UNIQUE constraint" in str(e) or "duplicate key" in str(e) or getattr(e, 'errno', None) == 1062:
             return jsonify({"error": "Duplicate shipment_id in update"}), 400
         return jsonify({"error": "Database error", "details": str(e)}), 500
     except ValueError as e:
