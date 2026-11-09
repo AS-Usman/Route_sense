@@ -7,7 +7,10 @@ try:
     HAS_CORS = True
 except ImportError:
     HAS_CORS = False
-from mysql.connector import Error
+try:
+    from mysql.connector import Error as DBError
+except ImportError:
+    DBError = Exception
 from werkzeug.security import generate_password_hash, check_password_hash
 from db import get_db_connection, init_db
 
@@ -234,7 +237,7 @@ def get_prediction_history():
             for r in rows
         ]
         return jsonify(results), 200
-    except Error as e:
+    except (DBError, Exception) as e:
         return jsonify({"error": "Database error", "details": str(e)}), 500
 
 
@@ -279,8 +282,8 @@ def register():
             "username": username_clean
         }), 201
 
-    except Error as e:
-        if "Duplicate entry" in str(e) or e.errno == 1062:
+    except (DBError, Exception) as e:
+        if "Duplicate entry" in str(e) or "UNIQUE constraint" in str(e) or getattr(e, 'errno', None) == 1062:
             return jsonify({"error": f"Username '{username_clean}' already exists"}), 409
         return jsonify({"error": "Database error", "details": str(e)}), 500
 
@@ -328,7 +331,7 @@ def login():
             "username": user_row[1]
         }), 200
 
-    except Error as e:
+    except (DBError, Exception) as e:
         return jsonify({"error": "Database error", "details": str(e)}), 500
 
 
@@ -407,8 +410,8 @@ def create_shipment():
             "shipment": format_shipment(new_row)
         }), 201
 
-    except Error as e:
-        if "Duplicate entry" in str(e) or e.errno == 1062:
+    except (DBError, Exception) as e:
+        if "Duplicate entry" in str(e) or "UNIQUE constraint" in str(e) or getattr(e, 'errno', None) == 1062:
             return jsonify({"error": f"Shipment ID '{data.get('shipment_id')}' already exists"}), 400
         return jsonify({"error": "Database error", "details": str(e)}), 500
     except ValueError as e:
@@ -436,7 +439,7 @@ def get_all_shipments():
         shipments_list = [format_shipment(row) for row in rows]
         return jsonify(shipments_list), 200
 
-    except Error as e:
+    except (DBError, Exception) as e:
         return jsonify({"error": "Database error", "details": str(e)}), 500
 
 
@@ -464,7 +467,7 @@ def get_shipment(identifier):
 
         return jsonify(format_shipment(row)), 200
 
-    except Error as e:
+    except (DBError, Exception) as e:
         return jsonify({"error": "Database error", "details": str(e)}), 500
 
 
@@ -527,8 +530,8 @@ def update_shipment(identifier):
             "shipment": format_shipment(updated_row)
         }), 200
 
-    except Error as e:
-        if "Duplicate entry" in str(e) or e.errno == 1062:
+    except (DBError, Exception) as e:
+        if "Duplicate entry" in str(e) or "UNIQUE constraint" in str(e) or getattr(e, 'errno', None) == 1062:
             return jsonify({"error": "Duplicate shipment_id in update"}), 400
         return jsonify({"error": "Database error", "details": str(e)}), 500
     except ValueError as e:
@@ -567,7 +570,7 @@ def delete_shipment(identifier):
             "shipment_id": shipment_code
         }), 200
 
-    except Error as e:
+    except (DBError, Exception) as e:
         return jsonify({"error": "Database error", "details": str(e)}), 500
 
 

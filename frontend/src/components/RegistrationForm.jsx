@@ -332,6 +332,21 @@ export function RegistrationForm({ user, setUser, logoutUser, addToast }) {
                   />
                 </div>
 
+                {/* Demo Credentials Auto-Fill Pill */}
+                <div className="p-3 rounded-xl bg-orange-50 border border-orange-200/80 text-xs text-stone-600 flex items-center justify-between gap-2">
+                  <div>
+                    <span className="font-semibold text-stone-800 text-[11px] block">Demo Dispatcher Account:</span>
+                    <span className="font-mono text-[11px] text-orange-600">dispatcher / RouteSense2026!</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setLoginData({ username: 'dispatcher', password: 'RouteSense2026!' })}
+                    className="px-2.5 py-1 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm transition-colors flex-shrink-0"
+                  >
+                    Auto-Fill
+                  </button>
+                </div>
+
                 <button
                   type="submit"
                   disabled={loading}
