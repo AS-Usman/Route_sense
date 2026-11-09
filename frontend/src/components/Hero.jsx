@@ -47,35 +47,6 @@ export function Hero() {
         className="absolute top-20 right-10 w-[400px] h-[400px] bg-amber-200/40 blur-[100px] rounded-full pointer-events-none -z-10" 
       />
 
-      {/* Floating Animated Logistics Badges & Icons */}
-      <motion.div
-        animate={{ y: [-8, 8, -8] }}
-        transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
-        className="hidden md:flex absolute top-36 left-12 p-3 rounded-2xl bg-white/80 backdrop-blur-md border border-orange-200/70 shadow-warm-lg items-center gap-3 z-10"
-      >
-        <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-600">
-          <Truck size={20} />
-        </div>
-        <div>
-          <div className="text-[10px] font-mono text-stone-500 font-semibold uppercase">CORRIDOR TELEMETRY</div>
-          <div className="text-xs font-bold text-stone-800">1,280 km Active Route</div>
-        </div>
-      </motion.div>
-
-      <motion.div
-        animate={{ y: [8, -8, 8] }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-        className="hidden md:flex absolute top-40 right-14 p-3 rounded-2xl bg-white/80 backdrop-blur-md border border-orange-200/70 shadow-warm-lg items-center gap-3 z-10"
-      >
-        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600">
-          <CheckCircle2 size={20} />
-        </div>
-        <div>
-          <div className="text-[10px] font-mono text-emerald-700 font-semibold uppercase">AI CONFIDENCE: 81.7%</div>
-          <div className="text-xs font-bold text-stone-800">Random Forest Verified</div>
-        </div>
-      </motion.div>
-
       {/* Hero Content */}
       <motion.div 
         style={{ y: textY }}

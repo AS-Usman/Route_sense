@@ -164,13 +164,6 @@ export function OperationsDashboard({ shipments = [], onDeleteShipment }) {
             Real-time throughput metrics, route risk distributions, and empirical delivery telemetry.
           </p>
         </div>
-
-        {/* Database Status Indicator */}
-        <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white border border-orange-200 text-xs font-mono shadow-warm-sm">
-          <Database size={15} className="text-orange-500" />
-          <span className="text-stone-600">MySQL Database:</span>
-          <span className="text-emerald-600 font-bold">CONNECTED</span>
-        </div>
       </div>
 
       {/* 4 Animated KPI Cards (Section 5) */}
@@ -310,7 +303,7 @@ export function OperationsDashboard({ shipments = [], onDeleteShipment }) {
             <div className="flex items-center gap-2">
               <span className="text-xs font-mono text-orange-600 uppercase font-bold tracking-wider">LIVE TELEMETRY LOG</span>
               <span className="px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[10px] font-mono font-bold border border-orange-200">
-                MYSQL DATABASE SYNCHRONIZED
+                LIVE SYNCHRONIZED
               </span>
             </div>
             <h3 className="text-xl font-display font-bold text-stone-900 mt-1">Recent Shipment Activity</h3>
