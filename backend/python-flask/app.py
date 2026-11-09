@@ -26,7 +26,15 @@ METRICS_PATH = os.path.join(os.path.dirname(__file__), 'evaluation_metrics.json'
 if not os.path.exists(METRICS_PATH):
     METRICS_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'evaluation_metrics.json')
 
-DIST_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'dist'))
+POSSIBLE_DIST_DIRS = [
+    os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'dist')),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend', 'dist')),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), 'frontend', 'dist')),
+    os.path.abspath('frontend/dist'),
+    os.path.abspath('../frontend/dist'),
+    os.path.abspath('/app/frontend/dist')
+]
+DIST_DIR = next((p for p in POSSIBLE_DIST_DIRS if os.path.exists(p)), POSSIBLE_DIST_DIRS[0])
 
 app = Flask(__name__, static_folder=DIST_DIR if os.path.exists(DIST_DIR) else None)
 app.secret_key = os.getenv('SECRET_KEY', 'supplyiq_secret_key_day38_2026')
@@ -96,9 +104,10 @@ def get_identifier_condition(identifier):
 
 
 # ==========================================================
-# HEALTH CHECK ENDPOINT → GET /
+# HEALTH CHECK ENDPOINT → GET /health or /api/health
 # ==========================================================
-@app.route('/', methods=['GET'])
+@app.route('/health', methods=['GET'])
+@app.route('/api/health', methods=['GET'])
 def health_check():
     """Health-check endpoint confirming SupplyIQ Flask backend & ML status."""
     return jsonify({
@@ -616,26 +625,45 @@ def api_delete_shipment(identifier):
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_frontend(path):
+    # API endpoints under /api/ that didn't match return 404 JSON
+    if path.startswith('api/'):
+        return jsonify({"error": "Resource or endpoint not found"}), 404
+
+    # Friendly page aliases for browser navigation:
+    page_aliases = {
+        'register': 'register.html',
+        'login': 'register.html',
+        'signin': 'register.html',
+        'signup': 'register.html',
+        'predictor': 'predictor.html',
+        'predict': 'predictor.html',
+        'dashboard': 'dashboard.html',
+        'shipments': 'shipments.html',
+        'features': 'features.html',
+        'contact': 'contact.html'
+    }
+
     if os.path.exists(DIST_DIR):
-        # 1. Exact file match (e.g., predictor.html, shipments.html, assets/main.js, favicon.ico)
+        # 1. Check page aliases first (e.g. /register -> register.html)
+        if path in page_aliases:
+            alias_target = page_aliases[path]
+            if os.path.exists(os.path.join(DIST_DIR, alias_target)):
+                return send_from_directory(DIST_DIR, alias_target)
+
+        # 2. Exact file match (e.g., register.html, predictor.html, assets/main.js, favicon.ico)
         candidate = os.path.join(DIST_DIR, path)
         if path and os.path.exists(candidate) and not os.path.isdir(candidate):
             return send_from_directory(DIST_DIR, path)
 
-        # 2. Page without .html extension (e.g. /predictor -> predictor.html, /shipments -> shipments.html)
+        # 3. Path + '.html' match (e.g. /predictor -> predictor.html)
         if path and os.path.exists(candidate + '.html'):
             return send_from_directory(DIST_DIR, path + '.html')
 
-        # 3. Root route
+        # 4. Root route
         if not path:
             return send_from_directory(DIST_DIR, 'index.html')
 
-    # Specific API 404 handler for missing backend endpoints
-    if path.startswith('api/') or path in ['predict', 'login', 'register', 'logout', 'profile']:
-        return jsonify({"error": "Resource or endpoint not found"}), 404
-
-    # Fallback to index.html for SPA routing if dist exists
-    if os.path.exists(DIST_DIR):
+        # 5. Default fallback to index.html for SPA routing
         return send_from_directory(DIST_DIR, 'index.html')
 
     return jsonify({
