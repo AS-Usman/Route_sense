@@ -74,6 +74,11 @@ def init_db():
             prediction_confidence REAL DEFAULT NULL,
             created_at            TIMESTAMPTZ DEFAULT NOW()
         );
+
+        -- Enable Row Level Security (RLS) to secure tables from public API exposure
+        ALTER TABLE IF EXISTS users ENABLE ROW LEVEL SECURITY;
+        ALTER TABLE IF EXISTS shipments ENABLE ROW LEVEL SECURITY;
+        ALTER TABLE IF EXISTS predictions ENABLE ROW LEVEL SECURITY;
     """
 
     try:
