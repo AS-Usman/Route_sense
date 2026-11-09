@@ -8,7 +8,8 @@ try:
 except ImportError:
     HAS_CORS = False
 try:
-    from mysql.connector import Error as DBError
+    import psycopg2
+    DBError = psycopg2.Error
 except ImportError:
     DBError = Exception
 from werkzeug.security import generate_password_hash, check_password_hash

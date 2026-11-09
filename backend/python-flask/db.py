@@ -1,224 +1,103 @@
-import os
-import sqlite3
-from dotenv import load_dotenv
+"""
+db.py — Supabase (PostgreSQL) database layer for RouteSense.
 
-try:
-    import mysql.connector
-    from mysql.connector import Error as MySQLError
-    HAS_MYSQL_DRIVER = True
-except ImportError:
-    HAS_MYSQL_DRIVER = False
-    MySQLError = Exception
+Connection is established via the DATABASE_URL environment variable
+(Supabase → Project Settings → Database → Connection string → URI).
+
+Format:
+    postgresql://postgres:<password>@db.<project-ref>.supabase.co:5432/postgres
+
+Set this variable in:
+  - .env              (local development)
+  - Railway dashboard (production)
+"""
+
+import os
+import psycopg2
+import psycopg2.extras
+from dotenv import load_dotenv
 
 load_dotenv()
 
-MYSQL_HOST = os.getenv('MYSQL_HOST', 'localhost')
-MYSQL_PORT = int(os.getenv('MYSQL_PORT', 3306))
-MYSQL_USER = os.getenv('MYSQL_USER', 'root')
-MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD', 'Usman@123')
-MYSQL_DB = os.getenv('MYSQL_DB', 'supplyiq')
+DATABASE_URL = os.getenv('DATABASE_URL')
 
-# SQLite fallback path
-SQLITE_DB_PATH = os.path.join(os.path.dirname(__file__), 'routesense.db')
-
-# Engine flag: None = untested, False = MySQL active, True = SQLite fallback active
-USE_SQLITE = None
+if not DATABASE_URL:
+    raise RuntimeError(
+        "[Database] DATABASE_URL is not set. "
+        "Add it to your .env file or Railway environment variables.\n"
+        "Format: postgresql://postgres:<password>@db.<ref>.supabase.co:5432/postgres"
+    )
 
 
-class SQLiteCursorAdapter:
-    """Adapts an sqlite3 cursor to behave identically to mysql-connector cursor."""
-    def __init__(self, cursor):
-        self._cursor = cursor
-        self.lastrowid = None
-
-    def execute(self, query, params=None):
-        adapted_query = query.replace('%s', '?')
-        # Remove MySQL-specific clauses if present in query
-        adapted_query = adapted_query.replace('ON UPDATE CURRENT_TIMESTAMP', '')
-        if params is not None:
-            self._cursor.execute(adapted_query, params)
-        else:
-            self._cursor.execute(adapted_query)
-        self.lastrowid = self._cursor.lastrowid
-        return self
-
-    def fetchone(self):
-        return self._cursor.fetchone()
-
-    def fetchall(self):
-        return self._cursor.fetchall()
-
-    def close(self):
-        try:
-            self._cursor.close()
-        except Exception:
-            pass
-
-
-class SQLiteConnectionAdapter:
-    """Adapts an sqlite3 connection to match mysql.connector autocommit interface."""
-    def __init__(self, conn):
-        self._conn = conn
-
-    def cursor(self):
-        return SQLiteCursorAdapter(self._conn.cursor())
-
-    def commit(self):
-        self._conn.commit()
-
-    def close(self):
-        try:
-            self._conn.close()
-        except Exception:
-            pass
-
-
-def get_db_connection(include_db=True):
+def get_db_connection():
     """
-    Returns an active database connection.
-    Attempts MySQL first; if unreachable, transparently falls back to SQLite.
+    Opens and returns a new psycopg2 connection to the Supabase PostgreSQL database.
+    Uses autocommit so callers don't need to call .commit() manually.
     """
-    global USE_SQLITE
-
-    # If SQLite has already been selected, return SQLite directly
-    if USE_SQLITE is True:
-        conn = sqlite3.connect(SQLITE_DB_PATH, timeout=10)
-        conn.isolation_level = None  # Autocommit mode
-        return SQLiteConnectionAdapter(conn)
-
-    # Try MySQL if driver is available
-    if HAS_MYSQL_DRIVER and USE_SQLITE is not True:
-        try:
-            connection_args = {
-                'host': MYSQL_HOST,
-                'port': MYSQL_PORT,
-                'user': MYSQL_USER,
-                'password': MYSQL_PASSWORD,
-                'connection_timeout': 3,
-                'autocommit': True
-            }
-            if include_db:
-                connection_args['database'] = MYSQL_DB
-
-            conn = mysql.connector.connect(**connection_args)
-            USE_SQLITE = False
-            return conn
-        except Exception as e:
-            if USE_SQLITE is None:
-                print(f"[Database] MySQL unreachable ({e}). Using embedded SQLite database at '{SQLITE_DB_PATH}'.")
-            USE_SQLITE = True
-
-    # Fallback to SQLite
-    conn = sqlite3.connect(SQLITE_DB_PATH, timeout=10)
-    conn.isolation_level = None  # Autocommit mode
-    return SQLiteConnectionAdapter(conn)
+    conn = psycopg2.connect(DATABASE_URL, connect_timeout=10)
+    conn.autocommit = True
+    return conn
 
 
-def init_db(schema_file=None):
+def init_db():
     """
-    Initializes database tables.
-    Supports both MySQL (via schema.sql) and embedded SQLite.
+    Creates all required tables (if they don't already exist) and seeds
+    the default demo dispatcher account.
+    Safe to call multiple times — uses CREATE TABLE IF NOT EXISTS.
     """
-    global USE_SQLITE
+    ddl = """
+        CREATE TABLE IF NOT EXISTS users (
+            id               SERIAL PRIMARY KEY,
+            username         TEXT UNIQUE NOT NULL,
+            password_hash    TEXT NOT NULL,
+            created_at       TIMESTAMPTZ DEFAULT NOW()
+        );
 
-    # Attempt MySQL initialization first
-    if HAS_MYSQL_DRIVER and USE_SQLITE is not True:
-        try:
-            if schema_file is None:
-                schema_file = os.path.join(os.path.dirname(__file__), 'schema.sql')
+        CREATE TABLE IF NOT EXISTS shipments (
+            id               SERIAL PRIMARY KEY,
+            shipment_id      TEXT UNIQUE NOT NULL,
+            origin           TEXT NOT NULL,
+            destination      TEXT NOT NULL,
+            distance         REAL NOT NULL,
+            weather          TEXT NOT NULL,
+            route_risk       TEXT NOT NULL,
+            delivery_status  TEXT NOT NULL,
+            delay_days       INTEGER NOT NULL DEFAULT 0,
+            created_at       TIMESTAMPTZ DEFAULT NOW(),
+            updated_at       TIMESTAMPTZ DEFAULT NOW()
+        );
 
-            connection = get_db_connection(include_db=False)
-            if not USE_SQLITE:
-                cursor = connection.cursor()
-                if os.path.exists(schema_file):
-                    with open(schema_file, 'r', encoding='utf-8') as f:
-                        sql_script = f.read()
-                    statements = [stmt.strip() for stmt in sql_script.split(';') if stmt.strip()]
-                    for statement in statements:
-                        cursor.execute(statement)
-                cursor.close()
-                connection.close()
+        CREATE TABLE IF NOT EXISTS predictions (
+            id                    SERIAL PRIMARY KEY,
+            shipment_id           INTEGER REFERENCES shipments(id) ON DELETE SET NULL,
+            predicted_risk        TEXT NOT NULL,
+            prediction_confidence REAL DEFAULT NULL,
+            created_at            TIMESTAMPTZ DEFAULT NOW()
+        );
+    """
 
-                # Seed demo dispatcher account in MySQL if not present
-                try:
-                    conn_app = get_db_connection(include_db=True)
-                    cur_app = conn_app.cursor()
-                    cur_app.execute("SELECT id FROM users WHERE username = %s", ('dispatcher',))
-                    if not cur_app.fetchone():
-                        from werkzeug.security import generate_password_hash
-                        cur_app.execute(
-                            "INSERT INTO users (username, password_hash) VALUES (%s, %s)",
-                            ('dispatcher', generate_password_hash('RouteSense2026!'))
-                        )
-                        print("[Database] Seeded demo dispatcher in MySQL: 'dispatcher' / 'RouteSense2026!'")
-                    cur_app.close()
-                    conn_app.close()
-                except Exception as seed_err:
-                    print(f"[Database] Notice: {seed_err}")
-
-                print(f"[Database] MySQL database '{MYSQL_DB}' and tables initialized successfully.")
-                return True
-        except Exception as e:
-            print(f"[Database] MySQL init failed ({e}). Initializing SQLite fallback...")
-            USE_SQLITE = True
-
-    # SQLite Table Initializer
     try:
-        conn = sqlite3.connect(SQLITE_DB_PATH)
-        c = conn.cursor()
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute(ddl)
 
-        c.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE NOT NULL,
-                password_hash TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-
-        c.execute("""
-            CREATE TABLE IF NOT EXISTS shipments (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                shipment_id TEXT UNIQUE NOT NULL,
-                origin TEXT NOT NULL,
-                destination TEXT NOT NULL,
-                distance REAL NOT NULL,
-                weather TEXT NOT NULL,
-                route_risk TEXT NOT NULL,
-                delivery_status TEXT NOT NULL,
-                delay_days INTEGER NOT NULL DEFAULT 0,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-
-        c.execute("""
-            CREATE TABLE IF NOT EXISTS predictions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                shipment_id INTEGER,
-                predicted_risk TEXT NOT NULL,
-                prediction_confidence REAL DEFAULT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-
-        # Seed default dispatcher user if empty
-        c.execute("SELECT COUNT(*) FROM users")
-        if c.fetchone()[0] == 0:
+        # Seed demo dispatcher account if it doesn't exist
+        cur.execute("SELECT id FROM users WHERE username = %s", ('dispatcher',))
+        if not cur.fetchone():
             from werkzeug.security import generate_password_hash
-            default_pass_hash = generate_password_hash('RouteSense2026!')
-            c.execute(
-                "INSERT INTO users (username, password_hash) VALUES (?, ?)",
-                ('dispatcher', default_pass_hash)
+            cur.execute(
+                "INSERT INTO users (username, password_hash) VALUES (%s, %s)",
+                ('dispatcher', generate_password_hash('RouteSense2026!'))
             )
-            print("[Database] Seeded initial dispatcher account: 'dispatcher' / 'RouteSense2026!'")
+            print("[Database] Seeded demo account → username: 'dispatcher' / password: 'RouteSense2026!'")
 
-        conn.commit()
+        cur.close()
         conn.close()
-        print(f"[Database] SQLite tables initialized successfully at '{SQLITE_DB_PATH}'.")
+        print("[Database] Supabase tables initialized successfully.")
         return True
+
     except Exception as e:
-        print(f"[Database] Error initializing SQLite database: {e}")
+        print(f"[Database] Error initializing Supabase database: {e}")
         return False
 
 
