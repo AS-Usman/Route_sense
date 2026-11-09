@@ -123,13 +123,22 @@ export function RegistrationForm({ user, setUser, logoutUser, addToast }) {
         if (addToast) addToast(`Welcome back, ${data.username}!`, 'success');
         setLoginData({ username: '', password: '' });
       } else {
-        if (addToast) addToast(data.error || 'Invalid credentials', 'error');
+        const errorMsg = data.error === 'Invalid username or password'
+          ? "Account not found. Click the 'Create Account' tab to register first, or click 'Instant Demo Sign-In' below!"
+          : (data.error || 'Login failed');
+        if (addToast) addToast(errorMsg, 'error');
       }
     } catch (err) {
       setLoading(false);
       setUser({ username: loginData.username.trim(), user_id: Date.now() });
       if (addToast) addToast(`Logged in locally (Offline mode): ${loginData.username}`, 'info');
     }
+  };
+
+  const handleInstantDemoLogin = () => {
+    const demoUser = { username: 'Dispatcher Demo', user_id: 101, role: 'Fleet Controller' };
+    setUser(demoUser);
+    if (addToast) addToast('Welcome back, Dispatcher Demo!', 'success');
   };
 
   const criteria = getPasswordCriteria(formData.password);
@@ -355,6 +364,23 @@ export function RegistrationForm({ user, setUser, logoutUser, addToast }) {
                   {loading ? <RefreshCw size={14} className="animate-spin" /> : <LogIn size={14} />}
                   <span>AUTHENTICATE & ENTER PORTAL</span>
                 </button>
+
+                {/* Instant 1-Click Demo Login */}
+                <div className="pt-2">
+                  <div className="relative flex py-2 items-center">
+                    <div className="flex-grow border-t border-orange-200"></div>
+                    <span className="flex-shrink mx-3 text-stone-400 text-[10px] font-mono uppercase font-bold">OR QUICK PREVIEW</span>
+                    <div className="flex-grow border-t border-orange-200"></div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleInstantDemoLogin}
+                    className="w-full py-2.5 rounded-xl bg-orange-100 hover:bg-orange-200 text-orange-800 font-mono font-bold text-xs border border-orange-300 transition-colors flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    <Sparkles size={14} className="text-orange-500" />
+                    <span>INSTANT DEMO SIGN-IN (1-CLICK)</span>
+                  </button>
+                </div>
               </form>
             )}
           </>

@@ -138,6 +138,24 @@ def init_db(schema_file=None):
                         cursor.execute(statement)
                 cursor.close()
                 connection.close()
+
+                # Seed demo dispatcher account in MySQL if not present
+                try:
+                    conn_app = get_db_connection(include_db=True)
+                    cur_app = conn_app.cursor()
+                    cur_app.execute("SELECT id FROM users WHERE username = %s", ('dispatcher',))
+                    if not cur_app.fetchone():
+                        from werkzeug.security import generate_password_hash
+                        cur_app.execute(
+                            "INSERT INTO users (username, password_hash) VALUES (%s, %s)",
+                            ('dispatcher', generate_password_hash('RouteSense2026!'))
+                        )
+                        print("[Database] Seeded demo dispatcher in MySQL: 'dispatcher' / 'RouteSense2026!'")
+                    cur_app.close()
+                    conn_app.close()
+                except Exception as seed_err:
+                    print(f"[Database] Notice: {seed_err}")
+
                 print(f"[Database] MySQL database '{MYSQL_DB}' and tables initialized successfully.")
                 return True
         except Exception as e:
