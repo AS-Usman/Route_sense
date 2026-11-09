@@ -24,6 +24,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy backend code, models, and dataset
 COPY backend/python-flask /app/backend/python-flask
 COPY routesense_model.joblib /app/routesense_model.joblib
+COPY routesense_model.joblib /app/backend/python-flask/routesense_model.joblib
 COPY evaluation_metrics.json /app/evaluation_metrics.json
 
 # Copy compiled frontend from Stage 1 into frontend/dist
@@ -37,5 +38,5 @@ EXPOSE 5000
 
 WORKDIR /app/backend/python-flask
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "120", "app:app"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 1 --threads 4 --timeout 120 app:app"]
 
