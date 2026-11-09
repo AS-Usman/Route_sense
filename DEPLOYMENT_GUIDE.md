@@ -36,7 +36,7 @@ git push origin main
    - **Branch:** `main`
    - **Build Command:**
      ```bash
-     pip install -r backend/python-flask/requirements.txt && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs && npm --prefix frontend install && npm --prefix frontend run build
+     pip install -r backend/python-flask/requirements.txt
      ```
    - **Start Command:**
      ```bash
