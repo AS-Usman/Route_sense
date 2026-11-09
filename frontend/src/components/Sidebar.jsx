@@ -16,10 +16,18 @@ import {
   Activity
 } from 'lucide-react';
 
-export function Sidebar({ isOpen, onClose, theme, toggleTheme, user, logoutUser }) {
+export function Sidebar({ 
+  isOpen, 
+  onClose, 
+  theme, 
+  toggleTheme, 
+  user, 
+  logoutUser,
+  activeTab = 'home',
+  onSelectTab
+}) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/';
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -34,23 +42,27 @@ export function Sidebar({ isOpen, onClose, theme, toggleTheme, user, logoutUser 
   if (!isOpen) return null;
 
   const navItems = [
-    { label: 'Home', href: '/index.html', icon: Home },
-    { label: 'Risk Predictor', href: '/predictor.html', icon: Calculator },
-    { label: 'Active Shipments', href: '/shipments.html', icon: Package },
-    { label: 'Dashboard', href: '/dashboard.html', icon: LayoutDashboard },
-    { label: 'Analytics', href: '/dashboard.html', icon: Activity },
-    { label: 'Features', href: '/features.html', icon: Sparkles },
-    { label: 'Support', href: '/contact.html', icon: Mail },
-    { label: user ? user.username : 'Account', href: '/register.html', icon: User }
+    { id: 'home', label: 'Home', href: '/index.html#home', icon: Home },
+    { id: 'how-it-works', label: 'How It Works', href: '/index.html#how-it-works', icon: Sparkles },
+    { id: 'predictor', label: 'Route Predictor', href: '/index.html#predictor', icon: Calculator },
+    { id: 'dashboard', label: 'Dashboard', href: '/index.html#dashboard', icon: LayoutDashboard },
+    { id: 'shipments', label: 'Active Shipments', href: '/index.html#shipments', icon: Package },
+    { id: 'analytics', label: 'Analytics', href: '/index.html#analytics', icon: Activity },
+    { id: 'about', label: 'About', href: '/index.html#about', icon: Home }
   ];
 
   const filteredNavItems = navItems.filter((item) =>
     item.label.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const isLinkActive = (href) => {
-    if (href === '/index.html' && (currentPath === '/' || currentPath === '/index.html')) return true;
-    return currentPath.includes(href);
+  const handleItemClick = (e, item) => {
+    e.preventDefault();
+    if (onSelectTab && item.id) {
+      onSelectTab(item.id);
+    } else {
+      window.location.href = item.href;
+    }
+    onClose();
   };
 
   return (
@@ -101,18 +113,19 @@ export function Sidebar({ isOpen, onClose, theme, toggleTheme, user, logoutUser 
         <ul className="sidebar-nav-list" style={{ flex: 1, overflowY: 'auto' }}>
           {filteredNavItems.map((item) => {
             const Icon = item.icon;
-            const active = isLinkActive(item.href);
+            const active = activeTab === item.id;
             return (
               <li key={item.label}>
-                <a
-                  href={item.href}
+                <button
+                  type="button"
                   className={`sidebar-nav-item ${active ? 'active' : ''}`}
                   title={item.label}
-                  onClick={onClose}
+                  onClick={(e) => handleItemClick(e, item)}
+                  style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}
                 >
                   <Icon size={18} className="nav-item-icon" />
                   {!isCollapsed && <span>{item.label}</span>}
-                </a>
+                </button>
               </li>
             );
           })}

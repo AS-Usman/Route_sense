@@ -13,7 +13,15 @@ import {
   Compass
 } from 'lucide-react';
 
-export function Navbar({ theme = 'light', toggleTheme, user, setUser, logoutUser }) {
+export function Navbar({ 
+  theme = 'light', 
+  toggleTheme, 
+  user, 
+  setUser, 
+  logoutUser, 
+  activeTab = 'home', 
+  onSelectTab 
+}) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -24,7 +32,6 @@ export function Navbar({ theme = 'light', toggleTheme, user, setUser, logoutUser
   });
 
   const profileRef = useRef(null);
-  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/';
 
   // Detect scroll to toggle glassmorphic background
   useEffect(() => {
@@ -50,19 +57,23 @@ export function Navbar({ theme = 'light', toggleTheme, user, setUser, logoutUser
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const navLinks = [
-    { label: 'Home', href: '/index.html' },
-    { label: 'How It Works', href: '/index.html#how-it-works' },
-    { label: 'Route Predictor', href: '/predictor.html' },
-    { label: 'Dashboard', href: '/dashboard.html' },
-    { label: 'Shipments', href: '/shipments.html' },
-    { label: 'Analytics', href: '/dashboard.html#analytics' },
-    { label: 'About', href: '/index.html#about' }
+  const navTabs = [
+    { id: 'home', label: 'Home', href: '/index.html#home' },
+    { id: 'how-it-works', label: 'How It Works', href: '/index.html#how-it-works' },
+    { id: 'predictor', label: 'Route Predictor', href: '/index.html#predictor' },
+    { id: 'dashboard', label: 'Dashboard', href: '/index.html#dashboard' },
+    { id: 'shipments', label: 'Shipments', href: '/index.html#shipments' },
+    { id: 'analytics', label: 'Analytics', href: '/index.html#analytics' },
+    { id: 'about', label: 'About', href: '/index.html#about' }
   ];
 
-  const isLinkActive = (href) => {
-    if (href === '/index.html' && (currentPath === '/' || currentPath === '/index.html' || currentPath === '')) return true;
-    return currentPath.includes(href.replace('#how-it-works', '').replace('#analytics', '').replace('#about', ''));
+  const handleTabClick = (e, tab) => {
+    e.preventDefault();
+    if (onSelectTab) {
+      onSelectTab(tab.id);
+    } else {
+      window.location.href = tab.href;
+    }
   };
 
   return (
@@ -77,7 +88,11 @@ export function Navbar({ theme = 'light', toggleTheme, user, setUser, logoutUser
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <a href="/index.html" className="flex items-center gap-2.5 group">
+            <a 
+              href="/index.html#home" 
+              onClick={(e) => handleTabClick(e, navTabs[0])}
+              className="flex items-center gap-2.5 group cursor-pointer"
+            >
               <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center shadow-warm-md group-hover:scale-105 transition-all duration-300">
                 <MapPin size={20} className="text-white group-hover:scale-110 transition-transform duration-300" />
                 <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-orange-600 animate-ping"></span>
@@ -93,29 +108,30 @@ export function Navbar({ theme = 'light', toggleTheme, user, setUser, logoutUser
               </div>
             </a>
 
-            {/* Desktop Navigation Links */}
+            {/* Desktop Navigation Tabs */}
             <div className="hidden lg:flex items-center gap-1 p-1 rounded-full bg-white/80 border border-orange-200/70 shadow-warm-sm backdrop-blur-md">
-              {navLinks.map((link) => {
-                const active = isLinkActive(link.href);
+              {navTabs.map((tab) => {
+                const isActive = activeTab === tab.id;
                 return (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className={`relative px-4 py-2 rounded-full text-xs font-semibold transition-all duration-200 ${
-                      active
-                        ? 'text-white'
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={(e) => handleTabClick(e, tab)}
+                    className={`relative px-4 py-2 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                      isActive
+                        ? 'text-white font-bold'
                         : 'text-stone-700 hover:text-orange-600 hover:bg-orange-50/60'
                     }`}
                   >
-                    {active && (
+                    {isActive && (
                       <motion.div
                         layoutId="navPillWarm"
                         className="absolute inset-0 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 shadow-warm-sm -z-10"
                         transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                       />
                     )}
-                    {link.label}
-                  </a>
+                    {tab.label}
+                  </button>
                 );
               })}
             </div>
@@ -217,16 +233,27 @@ export function Navbar({ theme = 'light', toggleTheme, user, setUser, logoutUser
               className="lg:hidden bg-white/95 backdrop-blur-2xl border-b border-orange-200 px-4 py-6 space-y-3 shadow-warm-xl"
             >
               <div className="flex flex-col space-y-1">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    onClick={() => setIsMobileOpen(false)}
-                    className="px-4 py-2.5 rounded-xl text-sm font-semibold text-stone-700 hover:text-orange-600 hover:bg-orange-50 transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                ))}
+                {navTabs.map((tab) => {
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={(e) => {
+                        setIsMobileOpen(false);
+                        handleTabClick(e, tab);
+                      }}
+                      className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center justify-between cursor-pointer ${
+                        isActive
+                          ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold shadow-warm-sm'
+                          : 'text-stone-700 hover:text-orange-600 hover:bg-orange-50'
+                      }`}
+                    >
+                      <span>{tab.label}</span>
+                      {isActive && <span className="w-2 h-2 rounded-full bg-white animate-pulse" />}
+                    </button>
+                  );
+                })}
               </div>
 
               <div className="pt-4 border-t border-orange-100 flex flex-col gap-2">

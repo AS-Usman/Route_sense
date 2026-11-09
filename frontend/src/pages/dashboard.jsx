@@ -9,9 +9,8 @@ export function DashboardPage() {
   return (
     <LayoutWrapper>
       {({ shipments, handleDeleteShipment }) => (
-        <div className="pt-24">
+        <div className="pt-24 pb-16">
           <OperationsDashboard shipments={shipments} onDeleteShipment={handleDeleteShipment} />
-          <AnalyticsSection />
         </div>
       )}
     </LayoutWrapper>

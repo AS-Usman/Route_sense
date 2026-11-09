@@ -16,7 +16,7 @@ import {
   Activity
 } from 'lucide-react';
 
-export function Hero() {
+export function Hero({ onNavigate }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -95,21 +95,23 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="mt-10 flex flex-wrap items-center justify-center gap-4"
         >
-          <a
-            href="/dashboard.html"
-            className="group px-8 py-3.5 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-display font-bold text-sm tracking-wide transition-all shadow-warm-md hover:shadow-warm-lg hover:-translate-y-0.5 flex items-center gap-2"
+          <button
+            type="button"
+            onClick={() => onNavigate ? onNavigate('dashboard') : window.location.href = '/dashboard.html'}
+            className="group px-8 py-3.5 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-display font-bold text-sm tracking-wide transition-all shadow-warm-md hover:shadow-warm-lg hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer"
           >
             <span>Explore Dashboard</span>
             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-          </a>
+          </button>
 
-          <a
-            href="/predictor.html"
-            className="group px-8 py-3.5 rounded-full bg-white hover:bg-orange-50/80 text-stone-800 font-display font-bold text-sm tracking-wide border border-orange-200/80 hover:border-orange-400 shadow-warm-sm hover:shadow-warm-md hover:-translate-y-0.5 transition-all flex items-center gap-2"
+          <button
+            type="button"
+            onClick={() => onNavigate ? onNavigate('predictor') : window.location.href = '/predictor.html'}
+            className="group px-8 py-3.5 rounded-full bg-white hover:bg-orange-50/80 text-stone-800 font-display font-bold text-sm tracking-wide border border-orange-200/80 hover:border-orange-400 shadow-warm-sm hover:shadow-warm-md hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
           >
             <Zap size={16} className="text-orange-500 group-hover:scale-110 transition-transform" />
             <span>Predict Route</span>
-          </a>
+          </button>
         </motion.div>
       </motion.div>
 

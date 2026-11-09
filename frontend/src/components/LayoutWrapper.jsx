@@ -53,6 +53,54 @@ export function LayoutWrapper({ children }) {
   const [user, setUser] = useLocalStorage('currentUser', null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Derive initial active tab from hash, query params, or URL path
+  const getInitialTab = () => {
+    if (typeof window === 'undefined') return 'home';
+    const hash = window.location.hash.replace('#', '').toLowerCase();
+    const VALID_TABS = ['home', 'how-it-works', 'predictor', 'dashboard', 'shipments', 'analytics', 'about'];
+    if (hash && VALID_TABS.includes(hash)) {
+      return hash;
+    }
+    const params = new URLSearchParams(window.location.search);
+    const tabParam = params.get('tab');
+    if (tabParam && VALID_TABS.includes(tabParam.toLowerCase())) {
+      return tabParam.toLowerCase();
+    }
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes('predictor')) return 'predictor';
+    if (path.includes('dashboard')) return 'dashboard';
+    if (path.includes('shipments')) return 'shipments';
+    return 'home';
+  };
+
+  const [activeTab, setActiveTab] = useState(getInitialTab);
+
+  // Sync tab state when hash changes (e.g. browser Back / Forward)
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      const VALID_TABS = ['home', 'how-it-works', 'predictor', 'dashboard', 'shipments', 'analytics', 'about'];
+      if (hash && VALID_TABS.includes(hash)) {
+        setActiveTab(hash);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const handleSelectTab = (tabId) => {
+    setActiveTab(tabId);
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname;
+      if (path === '/' || path === '/index.html' || path.endsWith('index.html') || path === '') {
+        window.history.pushState(null, '', `#${tabId}`);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        window.location.href = `/index.html#${tabId}`;
+      }
+    }
+  };
+
   // Sync shipments & user profile with Flask REST API on mount
   useEffect(() => {
     fetch(`${API_BASE}/shipments`, { credentials: 'include' })
@@ -183,6 +231,8 @@ export function LayoutWrapper({ children }) {
         toggleTheme={toggleTheme}
         user={user}
         logoutUser={logoutUser}
+        activeTab={activeTab}
+        onSelectTab={handleSelectTab}
         onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
       />
 
@@ -193,6 +243,8 @@ export function LayoutWrapper({ children }) {
         toggleTheme={toggleTheme}
         user={user}
         logoutUser={logoutUser}
+        activeTab={activeTab}
+        onSelectTab={handleSelectTab}
       />
 
       <main className="relative z-10 flex-grow">
@@ -205,6 +257,8 @@ export function LayoutWrapper({ children }) {
               user,
               setUser,
               logoutUser,
+              activeTab,
+              setActiveTab: handleSelectTab,
               toggleSidebar: () => setIsSidebarOpen(!isSidebarOpen)
             })
           : children}
