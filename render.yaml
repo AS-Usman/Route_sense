@@ -3,7 +3,7 @@ services:
     name: routesense
     runtime: python
     buildCommand: pip install -r backend/python-flask/requirements.txt
-    startCommand: cd backend/python-flask && gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 app:app
+    startCommand: cd backend/python-flask && gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120 app:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
