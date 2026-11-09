@@ -2,12 +2,7 @@ services:
   - type: web
     name: routesense
     runtime: python
-    buildCommand: |
-      pip install -r backend/python-flask/requirements.txt
-      curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-      apt-get install -y nodejs
-      npm --prefix frontend install
-      npm --prefix frontend run build
+    buildCommand: pip install -r backend/python-flask/requirements.txt
     startCommand: cd backend/python-flask && gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 app:app
     envVars:
       - key: PYTHON_VERSION
