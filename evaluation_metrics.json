@@ -1,0 +1,48 @@
+{
+  "rows": 6000,
+  "train_rows": 4800,
+  "test_rows": 1200,
+  "delay_MAE_hours": 2.141,
+  "delay_RMSE_hours": 8.535,
+  "delay_R2": 0.902,
+  "risk_accuracy": 0.8167,
+  "risk_classification_report": {
+    "High": {
+      "precision": 0.7313019390581718,
+      "recall": 0.7764705882352941,
+      "f1-score": 0.7532097004279601,
+      "support": 340.0
+    },
+    "Low": {
+      "precision": 0.808695652173913,
+      "recall": 0.788135593220339,
+      "f1-score": 0.7982832618025751,
+      "support": 118.0
+    },
+    "Moderate": {
+      "precision": 0.7964912280701755,
+      "recall": 0.7694915254237288,
+      "f1-score": 0.7827586206896552,
+      "support": 295.0
+    },
+    "Severe": {
+      "precision": 0.9020501138952164,
+      "recall": 0.8859060402684564,
+      "f1-score": 0.8939051918735892,
+      "support": 447.0
+    },
+    "accuracy": 0.8166666666666667,
+    "macro avg": {
+      "precision": 0.8096347332993691,
+      "recall": 0.8050009367869546,
+      "f1-score": 0.8070391936984449,
+      "support": 1200.0
+    },
+    "weighted avg": {
+      "precision": 0.8185417161901363,
+      "recall": 0.8166666666666667,
+      "f1-score": 0.8173151140909607,
+      "support": 1200.0
+    }
+  }
+}

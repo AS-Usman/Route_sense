@@ -1,0 +1,19 @@
+{
+  "name": "routesense-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "RouteSense root package to manage frontend and backend concurrently",
+  "scripts": {
+    "start": "concurrently -k -n \"flask,node,frontend\" -c \"yellow.bold,cyan.bold,magenta.bold\" \"python backend/python-flask/app.py\" \"npm start --prefix backend\" \"npm run dev --prefix frontend\"",
+    "dev": "concurrently -k -n \"flask,node,frontend\" -c \"yellow.bold,cyan.bold,magenta.bold\" \"python backend/python-flask/app.py\" \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "flask": "python backend/python-flask/app.py",
+    "backend": "npm run dev --prefix backend",
+    "frontend": "npm run dev --prefix frontend",
+    "build": "npm --prefix frontend install && npm --prefix frontend run build",
+    "start:prod": "cd backend/python-flask && gunicorn --bind 0.0.0.0:$PORT app:app",
+    "install:all": "npm install --prefix backend && npm install --prefix frontend && pip install -r backend/python-flask/requirements.txt"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
