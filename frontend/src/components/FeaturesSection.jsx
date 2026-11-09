@@ -8,8 +8,6 @@ import {
   Cpu, 
   Compass, 
   ArrowRight,
-  TrendingUp,
-  Radio,
   Sparkles
 } from 'lucide-react';
 
@@ -17,43 +15,37 @@ const FEATURES = [
   {
     num: '01',
     icon: Zap,
-    color: 'cyan',
-    title: 'SMART DELAY RISK SCORING',
+    title: 'Smart Delay Risk Scoring',
     desc: 'Empirical multi-variate risk scoring assessing weather hazards, traffic density, and carrier reliability in real time.'
   },
   {
     num: '02',
     icon: ShieldAlert,
-    color: 'purple',
-    title: 'PROACTIVE ALERT MATRIX',
+    title: 'Proactive Alert Matrix',
     desc: 'Receive automated risk warnings on supply chain disruptions 6-12 hours prior to corridor departure.'
   },
   {
     num: '03',
     icon: CloudSun,
-    color: 'amber',
-    title: 'METEOROLOGICAL ROUTING',
+    title: 'Meteorological Routing',
     desc: 'Automatically reroute high-priority cargo corridors around severe storms, blizzards, or extreme heat passes.'
   },
   {
     num: '04',
     icon: Activity,
-    color: 'emerald',
-    title: 'FLEET HEALTH & TELEMETRY',
+    title: 'Fleet Health & Telemetry',
     desc: 'Monitor carrier reliability ratings, modal transit speeds, fuel burn indices, and driver rest intervals.'
   },
   {
     num: '05',
     icon: Cpu,
-    color: 'cyan',
-    title: 'RANDOM FOREST ML ENGINE',
+    title: 'Random Forest ML Engine',
     desc: 'Trained on 6,000 real-world shipments achieving 0.902 R² regression accuracy and 81.7% 4-class risk categorization.'
   },
   {
     num: '06',
     icon: Compass,
-    color: 'purple',
-    title: 'SATELLITE FREIGHT MAPPING',
+    title: 'Satellite Freight Mapping',
     desc: 'Visualize live intermodal corridors with dynamic risk color coding and simulated carrier progress tracking.'
   }
 ];
@@ -62,14 +54,14 @@ export function FeaturesSection() {
   return (
     <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="features">
       <div className="text-center max-w-3xl mx-auto mb-16">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-mono uppercase mb-4">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-orange-100 border border-orange-200 text-orange-600 text-xs font-mono uppercase font-semibold mb-4">
           <Sparkles size={12} />
           ENTERPRISE-GRADE CAPABILITIES
         </div>
-        <h2 className="text-3xl sm:text-5xl font-display font-black text-white tracking-tight">
+        <h2 className="text-3xl sm:text-5xl font-display font-black text-stone-900 tracking-tight">
           Logistics Intelligence Architecture
         </h2>
-        <p className="text-gray-400 text-sm sm:text-base mt-3">
+        <p className="text-stone-600 text-sm sm:text-base mt-3">
           Built for modern supply chain dispatch teams requiring microsecond inference, empirical forecasts, and automated risk mitigation.
         </p>
       </div>
@@ -85,29 +77,29 @@ export function FeaturesSection() {
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
               whileHover={{ y: -6 }}
-              className="glass-card rounded-2xl p-6 border border-white/10 hover:border-cyan-400/50 transition-all duration-300 group flex flex-col justify-between"
+              className="bg-white rounded-3xl p-7 border border-orange-200/70 shadow-sm hover:shadow-xl hover:border-orange-400/80 transition-all duration-300 group flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between mb-5">
-                  <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-cyan-400 group-hover:scale-110 group-hover:border-cyan-400 transition-all shadow-glow-cyan">
-                    <Icon size={18} />
+                  <div className="w-12 h-12 rounded-2xl bg-orange-50 border border-orange-200/60 flex items-center justify-center text-orange-500 group-hover:scale-110 group-hover:bg-orange-500 group-hover:text-white transition-all shadow-sm">
+                    <Icon size={20} />
                   </div>
-                  <span className="font-mono text-xs text-gray-500 font-bold group-hover:text-cyan-400 transition-colors">
+                  <span className="font-mono text-xs text-orange-400 font-bold">
                     {feat.num}
                   </span>
                 </div>
 
-                <h3 className="text-base font-display font-bold text-white tracking-wide mb-2 group-hover:text-cyan-300 transition-colors">
+                <h3 className="text-lg font-bold text-stone-900 tracking-tight mb-2 group-hover:text-orange-600 transition-colors">
                   {feat.title}
                 </h3>
-                <p className="text-xs text-gray-400 leading-relaxed">
+                <p className="text-sm text-stone-600 leading-relaxed">
                   {feat.desc}
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs font-mono text-cyan-400 font-semibold group-hover:translate-x-1 transition-transform">
+              <div className="mt-6 pt-4 border-t border-orange-100 flex items-center justify-between text-xs font-mono text-orange-600 font-semibold group-hover:translate-x-1 transition-transform">
                 <span>EXPLORE CAPABILITY</span>
-                <ArrowRight size={13} />
+                <ArrowRight size={14} />
               </div>
             </motion.div>
           );

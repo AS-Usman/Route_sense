@@ -10,7 +10,7 @@ html{
 }
 
 body{
-    background:linear-gradient(180deg, #f1f8ff 0%, #f8fbf8 45%, #fdf6f4 100%);
+    background:linear-gradient(180deg, #FFF7ED 0%, #f8fbf8 45%, #fdf6f4 100%);
     color:#0f172a;
     min-height:100vh;
     transition:background 0.4s ease, color 0.4s ease;
@@ -44,7 +44,7 @@ body[data-theme='dark'] .navbar{
 .logo{
     font-size:28px;
     font-weight:700;
-    color:#2563eb;
+    color:#F97316;
 }
 
 body[data-theme='dark'] .logo{
@@ -75,7 +75,7 @@ body[data-theme='dark'] .logo{
     bottom:-6px;
     width:0;
     height:2px;
-    background:#2563eb;
+    background:#F97316;
     transition:width 0.3s ease;
 }
 
@@ -90,7 +90,7 @@ body[data-theme='dark'] .nav-links a{
 .theme-toggle{
     background:rgba(37,99,235,0.08);
     border:1px solid rgba(37,99,235,0.2);
-    color:#2563eb;
+    color:#F97316;
     padding:12px 14px;
     border-radius:50%;
     cursor:pointer;
@@ -145,7 +145,7 @@ body[data-theme='dark'] .theme-toggle{
 .hero-greeting{
     font-size:18px;
     font-weight:700;
-    color:#2563eb;
+    color:#F97316;
     margin-bottom:10px;
     text-transform:uppercase;
     letter-spacing:1px;
@@ -200,7 +200,7 @@ body[data-theme='dark'] .hero-text p{
 }
 
 .btn{
-    background:linear-gradient(to right,#2563eb,#38bdf8);
+    background:linear-gradient(to right,#F97316,#FB923C);
     color:white;
     padding:14px 28px;
     border-radius:999px;
@@ -217,8 +217,8 @@ body[data-theme='dark'] .hero-text p{
 
 .btn-outline{
     background:transparent;
-    color:#2563eb;
-    border:2px solid #2563eb;
+    color:#F97316;
+    border:2px solid #F97316;
 }
 
 body[data-theme='dark'] .btn-outline{
@@ -313,7 +313,7 @@ body[data-theme='dark'] .card{
 
 .card i{
     font-size:40px;
-    color:#2563eb;
+    color:#F97316;
     margin-bottom:15px;
 }
 
@@ -385,13 +385,13 @@ body[data-theme='dark'] .dashboard-header p{
     border-radius:999px;
     border:1px solid rgba(37,99,235,0.2);
     background:white;
-    color:#2563eb;
+    color:#F97316;
     cursor:pointer;
     transition:all 0.3s ease;
 }
 
 .dashboard-tab.active{
-    background:#2563eb;
+    background:#F97316;
     color:white;
     box-shadow:0 22px 35px rgba(37,99,235,0.18);
 }
@@ -499,7 +499,7 @@ body[data-theme='dark'] .chart-card h3{
 
 .bar-fill{
     width:100%;
-    background:linear-gradient(180deg,#38bdf8,#2563eb);
+    background:linear-gradient(180deg,#FB923C,#F97316);
     border-radius:24px 24px 0 0;
     min-height:28px;
     transition:height 0.6s ease;
@@ -597,7 +597,7 @@ body[data-theme='dark'] .register label{
 }
 
 .toggle-password:hover{
-    color:#2563eb;
+    color:#F97316;
 }
 
 body[data-theme='dark'] .toggle-password{
@@ -672,7 +672,7 @@ input,textarea{
 
 input:focus,textarea:focus{
     outline:none;
-    border-color:#2563eb;
+    border-color:#F97316;
     box-shadow:0 0 0 4px rgba(37,99,235,0.08);
 }
 
@@ -763,7 +763,7 @@ footer{
     bottom:24px;
     width:48px;
     height:48px;
-    background:#2563eb;
+    background:#F97316;
     color:white;
     border:none;
     border-radius:50%;

@@ -175,7 +175,7 @@ export function LayoutWrapper({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#080D1B] text-white font-sans antialiased selection:bg-cyan-500/30 selection:text-cyan-200 flex flex-col justify-between">
+    <div className="min-h-screen bg-[#FFF7ED] text-stone-900 font-sans antialiased selection:bg-orange-500/30 selection:text-orange-900 flex flex-col justify-between">
       <Navbar
         theme={theme}
         toggleTheme={toggleTheme}

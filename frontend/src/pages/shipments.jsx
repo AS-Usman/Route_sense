@@ -11,13 +11,13 @@ export function ShipmentsPage() {
       {({ shipments, handleDeleteShipment, addToast }) => (
         <div className="pt-24 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-mono tracking-widest uppercase mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 border border-orange-200 text-orange-600 text-xs font-mono tracking-widest uppercase font-semibold mb-3">
               LIVE SATELLITE CORRIDOR RADAR
             </div>
-            <h1 className="text-3xl sm:text-5xl font-display font-black text-white tracking-tight">
+            <h1 className="text-3xl sm:text-5xl font-display font-black text-stone-900 tracking-tight">
               Active Shipments & Fleet Telemetry
             </h1>
-            <p className="text-gray-400 text-sm sm:text-base mt-2 max-w-2xl">
+            <p className="text-stone-600 text-sm sm:text-base mt-2 max-w-2xl">
               Track global carrier movement along empirical logistics corridors, monitor live weather hazards, and inspect delayed routes in real-time.
             </p>
           </div>

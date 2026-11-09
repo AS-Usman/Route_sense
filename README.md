@@ -1,139 +1,141 @@
-# SupplyIQ — Delivery Delay & Route Risk Predictor
+# RouteSense — Smart Route & Delivery Risk Intelligence Platform 🚚✨
 
-**Full Stack AI Developer Training — Days 36, 37, 38 & 39 Deliverable: Flask + MySQL Backend**
+[![React](https://img.shields.io/badge/React-18-blue.svg?logo=react)](https://react.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4-38bdf8.svg?logo=tailwind-css)](https://tailwindcss.com/)
+[![Python](https://img.shields.io/badge/Python-3.11-yellow.svg?logo=python)](https://python.org/)
+[![Flask](https://img.shields.io/badge/Flask-3.1-black.svg?logo=flask)](https://flask.palletsprojects.com/)
+[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.9-orange.svg?logo=scikit-learn)](https://scikit-learn.org/)
+[![Deployed on Render](https://img.shields.io/badge/Deployed-Render-46E3B7.svg?logo=render)](https://render.com/)
 
-SupplyIQ is an intelligent logistics and supply chain predictor designed to analyze route risks and delivery delay exposures. 
+**RouteSense** is a full-stack, AI-powered logistics SaaS platform that predicts delivery delays, evaluates multi-modal freight route risks, and provides actionable mitigation strategies before shipments depart.
 
-- **Day 36**: Core RESTful CRUD API for managing shipment data (`/shipments`) with MySQL persistence.
-- **Day 37**: Authentication Basics featuring user registration (`POST /register`) with secure password hashing (`werkzeug.security.generate_password_hash`) and MySQL `users` table storage.
-- **Day 38**: Sessions & Login Flow featuring credential authentication (`POST /login`), password verification (`check_password_hash`), `@login_required` decorator, protected route (`GET /profile`), and session termination (`POST /logout`).
-- **Day 39**: Individual Backend Project Kickoff & Scaffolding (`routes_plan.md`, `predictions` table in MySQL `schema.sql`, working `GET /` health-check, and Day 40 TODO placeholders).
+Built with a **warm orange visual theme**, modern glassmorphism, Framer Motion animations, interactive Leaflet map telemetry, and a trained **Random Forest Machine Learning model**.
 
 ---
 
-## 📁 Project Structure
+## 🚀 Key Features
 
-```
-RouteSense / SupplyIQ (d:/Intern/routesense-site/)
-│
+- 🧠 **AI-Powered Route Prediction**: Live ML model evaluation incorporating distance, carrier rating, traffic congestion, weather hazards, cargo weight, and transport mode (Truck, Air, Rail, Maritime).
+- 🗺️ **Interactive Freight Corridor Navigator**: Leaflet-based interactive radar map with animated vehicle telemetry, route risk color coding, and corridor waypoints.
+- 📊 **Logistics Operations Dashboard**: Real-time KPI counters, Recharts performance curves, risk distribution donuts, and corridor volume breakdowns.
+- 🗂️ **Interactive Physical Card Deck**: Throwable, gesture-friendly shipment card stack with keyboard shortcuts (`←`/`→`) and deep-dive case modals.
+- 🔐 **Authentication & Session Security**: Secure registration and session-based login with Werkzeug password hashing and MySQL persistence.
+- 🎨 **Warm Modern Design**: Warm cream (`#FFF7ED`), peach (`#FED7AA`), and vibrant orange (`#F97316`) aesthetic, fully responsive across mobile, tablet, and desktop.
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technologies |
+|---|---|
+| **Frontend** | React 18, Vite, Tailwind CSS v3, Framer Motion, Lucide Icons, Recharts, Leaflet / React-Leaflet |
+| **Backend** | Python Flask, Gunicorn WSGI, Flask-CORS, Werkzeug Security, MySQL Connector |
+| **Machine Learning** | Scikit-Learn (Random Forest Regressor & Classifier), Joblib, Pandas, NumPy |
+| **Deployment** | Render Web Service (Unified Static + API Server), Docker, Railway |
+
+---
+
+## 📁 Repository Structure
+
+```text
+routesense-site/
 ├── backend/
-│   ├── server.js                 # Active Node.js / Express REST API server
-│   ├── routes/                   # Express routes (shipments, risk, health)
-│   ├── controllers/              # Business logic controllers
-│   └── python-flask/             # Python Flask reference backend
-│       ├── app.py                # Flask app with CRUD, Auth & Scaffolding
-│       ├── db.py                 # Centralized MySQL database connection & schema executor
-│       ├── schema.sql            # MySQL database schema
-│       ├── routes_plan.md        # API Route Architecture Plan
-│       └── requirements.txt      # Python dependencies
-│
-├── frontend/                     # Vite + React frontend application
-│   ├── src/                      # Component architecture and hooks
+│   ├── python-flask/
+│   │   ├── app.py                     # Flask production server (API & static frontend)
+│   │   ├── db.py                      # MySQL database connector & schema runner
+│   │   ├── predict.py                 # ML pipeline loader & feature normalizer
+│   │   ├── schema.sql                 # MySQL schema (users, shipments, predictions)
+│   │   └── requirements.txt           # Python dependencies (Flask, scikit-learn, gunicorn)
+│   └── server.js                      # Express API reference
+├── frontend/
+│   ├── src/
+│   │   ├── components/                # React UI components (Hero, Map, Dashboard, Deck)
+│   │   ├── config/api.js              # Dynamic API base URL configuration
+│   │   └── index.css                  # Custom Tailwind styles & warm utilities
+│   ├── dist/                          # Production compiled frontend assets
 │   └── package.json
-│
-├── .env                          # Shared environment variables
-├── package.json                  # Root monorepo script orchestrator
-└── README.md                     # Setup and documentation
+├── routesense_model.joblib            # Trained Random Forest ML pipeline (92 MB)
+├── evaluation_metrics.json            # Model benchmark metrics (MAE, R2, Accuracy)
+├── render.yaml                        # Render 1-click blueprint deployment
+├── Dockerfile                         # Production multi-stage Docker build
+├── docker-compose.yml                 # Local stack with MySQL container
+├── DEPLOYMENT_GUIDE.md                # Comprehensive deployment instructions
+└── package.json                       # Monorepo task runner
 ```
 
 ---
 
-## ⚙️ 1. Configuration & MySQL Schema Setup
+## 🔌 API Endpoints
 
-> [!WARNING]
-> **Security Notice**: If `.env` has been committed to a remote repository (e.g. GitHub), remove it from git tracking immediately (`git rm --cached .env`) and rotate your local MySQL root password to prevent unauthorized access. Use `.env.example` as a template.
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `GET` | `/` | Public | Serves production React UI (`index.html`) |
+| `POST` | `/predict` | Public | Live ML delay and risk prediction |
+| `GET` | `/api/model/metrics`| Public | ML model performance metrics |
+| `POST` | `/register` | Public | User registration with password hashing |
+| `POST` | `/login` | Public | User authentication & session initialization |
+| `POST` | `/logout` | Public | Clears active session |
+| `GET` | `/profile` | Protected | Authenticated user profile |
+| `GET` | `/shipments` | Public | Retrieves active tracked shipments |
+| `POST` | `/shipments` | Public | Creates a new shipment |
+| `DELETE`| `/shipments/<id>` | Public | Deletes a tracked shipment |
 
-Ensure MySQL Server is running on port `3306`. Configure credentials in `.env`:
+---
 
-```env
-MYSQL_HOST=localhost
-MYSQL_PORT=3306
-MYSQL_USER=root
-MYSQL_PASSWORD=Usman@123
-MYSQL_DB=supplyiq
+## ⚡ Quick Start (Local Development)
 
-FLASK_ENV=development
-PORT=5000
-SECRET_KEY=supplyiq_secret_key_day38_2026
+### Prerequisites
+- Node.js 18+ & npm
+- Python 3.10+
+- (Optional) MySQL Server 8.0+
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/AS-Usman/Route_sense.git
+cd Route_sense
 ```
 
-### Complete Database Schema (`schema.sql`)
-Running `python app.py` or `python db.py` automatically initializes all three tables:
+### 2. Install dependencies
+```bash
+# Install frontend packages
+npm --prefix frontend install
 
-```sql
-CREATE DATABASE IF NOT EXISTS supplyiq;
-USE supplyiq;
-
--- Shipments Table (Day 36)
-CREATE TABLE IF NOT EXISTS shipments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    shipment_id VARCHAR(50) NOT NULL UNIQUE,
-    origin VARCHAR(100) NOT NULL,
-    destination VARCHAR(100) NOT NULL,
-    distance FLOAT NOT NULL,
-    weather VARCHAR(50) NOT NULL,
-    route_risk VARCHAR(50) NOT NULL,
-    delivery_status VARCHAR(50) NOT NULL,
-    delay_days INT NOT NULL DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
--- Users Table (Day 37)
-CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(100) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Predictions Table (Day 39)
-CREATE TABLE IF NOT EXISTS predictions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    shipment_id INT NOT NULL,
-    predicted_risk VARCHAR(50) NOT NULL,
-    prediction_confidence FLOAT DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (shipment_id) REFERENCES shipments(id) ON DELETE CASCADE
-);
+# Install Python backend packages
+pip install -r backend/python-flask/requirements.txt
 ```
 
----
+### 3. Start development servers
+```bash
+# Start Flask backend (port 5000)
+python backend/python-flask/app.py
 
-## 🔌 2. API Endpoint Overview
-
-| HTTP Method | Endpoint | Protection | Purpose | Status Code |
-|---|---|---|---|---|
-| `GET` | `/` | Public | Backend Health Check | `200 OK` |
-| `POST` | `/register` | Public | Register user with Werkzeug password hashing | `201 Created` |
-| `POST` | `/login` | Public | User login & session creation | `200 OK` |
-| `POST` | `/logout` | Public | Clear active session | `200 OK` |
-| `GET` | `/profile` | `@login_required` | Protected profile info | `200 OK` / `401` |
-| `GET/POST/PUT/DELETE` | `/shipments` | Public | Day 36 Shipment CRUD operations | `200 OK` / `201` |
-| `POST` | `/api/predict` | `@login_required` | ML Model Delay Prediction *(Day 40 TODO)* | Scaffolding |
+# In a separate terminal, start Vite frontend (port 5173)
+npm run dev --prefix frontend
+```
+Visit `http://localhost:5173` to view the application with hot reloading.
 
 ---
 
-## 🧪 3. Day 39 Health Check Endpoint
+## 🐳 Docker Deployment
 
-- **Request:** `GET http://127.0.0.1:5000/`
-- **Response (`200 OK`):**
-  ```json
-  {
-    "message": "SupplyIQ backend is running",
-    "project": "SupplyIQ — Delivery Delay & Route Risk Predictor",
-    "stage": "Day 39 — Individual Backend Project Kickoff & Scaffolding",
-    "status": "running",
-    "version": "1.0.0"
-  }
-  ```
+Run the complete RouteSense stack with MySQL using Docker Compose:
+
+```bash
+docker compose up -d --build
+```
+The application will be live at `http://localhost:5000`.
 
 ---
 
-## ✅ Day 39 Completion Checklist
-- [x] API routes planned and documented in [routes_plan.md](file:///d:/Intern/routesense-site/routes_plan.md)
-- [x] MySQL schema updated in `schema.sql` with `users`, `shipments`, and `predictions` tables
-- [x] `predictions` table created with foreign key referencing `shipments(id)`
-- [x] Flask skeleton running with working `GET /` health-check endpoint (`200 OK`)
-- [x] Scaffolding placeholders and explicit `# TODO Day 40` comments placed in `app.py`
-- [x] Existing Day 36 shipment CRUD, Day 37 user registration, and Day 38 session authentication remain 100% operational
+## 🌐 Production Deployment (Render)
+
+RouteSense is optimized for unified deployment on [Render](https://render.com):
+- **Build Command**: `pip install -r backend/python-flask/requirements.txt`
+- **Start Command**: `cd backend/python-flask && gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120 app:app`
+
+For detailed step-by-step instructions across Render, Railway, Vercel, and VPS, see [DEPLOYMENT_GUIDE.md](file:///d:/Intern/routesense-site/DEPLOYMENT_GUIDE.md).
+
+---
+
+## 📄 License
+This project is open-source and available under the [MIT License](LICENSE).

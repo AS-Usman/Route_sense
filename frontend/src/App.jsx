@@ -33,14 +33,14 @@ export function App() {
           {/* Section 7: Dedicated Full-Scale Satellite Freight Corridor Map */}
           <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="map">
             <div className="text-center max-w-3xl mx-auto mb-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-mono uppercase mb-3">
-                <Compass size={13} className="animate-spin-slow" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 border border-orange-200 text-orange-600 text-xs font-mono uppercase font-semibold mb-3">
+                <Compass size={13} className="animate-spin-slow text-orange-500" />
                 INTERACTIVE CORRIDOR TELEMETRY
               </div>
-              <h2 className="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight">
+              <h2 className="text-3xl sm:text-4xl font-display font-bold text-stone-900 tracking-tight">
                 Global Freight Radar & Corridor Navigator
               </h2>
-              <p className="text-gray-400 text-sm sm:text-base mt-2">
+              <p className="text-stone-600 text-sm sm:text-base mt-2">
                 Simulate real-time vessel, aircraft, and truck progress along major freight lanes. Color-coded based on live route risk.
               </p>
             </div>

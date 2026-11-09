@@ -4,7 +4,7 @@ import { CheckCircle2, Cpu, Shield, BarChart2, Wifi } from 'lucide-react';
 
 const TIMELINE_EVENTS = [
   { date: 'AUG 15', event: 'Risk Analysis Module', status: 'Available', type: 'Core Engine', Icon: Cpu, color: 'text-orange-600', bg: 'bg-orange-100' },
-  { date: 'AUG 15', event: 'Shipment Monitor & Flask Sync', status: 'Active', type: 'REST API', Icon: Wifi, color: 'text-blue-600', bg: 'bg-blue-100' },
+  { date: 'AUG 15', event: 'Shipment Monitor & Flask Sync', status: 'Active', type: 'REST API', Icon: Wifi, color: 'text-amber-600', bg: 'bg-amber-100' },
   { date: 'AUG 15', event: 'Operations Dashboard', status: 'Online', type: 'Analytics', Icon: BarChart2, color: 'text-green-600', bg: 'bg-green-100' },
   { date: 'AUG 15', event: 'Session Authentication', status: 'Verified', type: 'Security', Icon: Shield, color: 'text-purple-600', bg: 'bg-purple-100' }
 ];
