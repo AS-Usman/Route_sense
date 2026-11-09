@@ -1,0 +1,1 @@
+import{a as t,j as e,R as r,L as o}from"./LayoutWrapper-BEPNrv6f.js";import{F as s}from"./FeaturesSection-Bhu87vvZ.js";import"./cloud-sun-DAitilYm.js";import"./cpu-bLo1OmQd.js";function a(){return e.jsx(o,{children:e.jsx("div",{className:"pt-24 pb-16",children:e.jsx(s,{})})})}t.createRoot(document.getElementById("root")).render(e.jsx(r.StrictMode,{children:e.jsx(a,{})}));

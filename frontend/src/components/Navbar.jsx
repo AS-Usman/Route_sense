@@ -55,7 +55,7 @@ export function Navbar({ theme = 'light', toggleTheme, user, setUser, logoutUser
     { label: 'How It Works', href: '/index.html#how-it-works' },
     { label: 'Route Predictor', href: '/predictor.html' },
     { label: 'Dashboard', href: '/dashboard.html' },
-    { label: 'Corridor Map', href: '/shipments.html' },
+    { label: 'Shipments', href: '/shipments.html' },
     { label: 'Analytics', href: '/dashboard.html#analytics' },
     { label: 'About', href: '/index.html#about' }
   ];

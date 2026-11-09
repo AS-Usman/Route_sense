@@ -22,7 +22,7 @@ import {
   RefreshCw,
   Compass
 } from 'lucide-react';
-import { InteractiveRouteMap, ROUTE_PRESETS } from './InteractiveRouteMap';
+import { ROUTE_PRESETS } from '../config/presets';
 
 export function ShipmentRiskForm({ onSaveShipment, addToast }) {
   const [formData, setFormData] = useState({
@@ -42,7 +42,6 @@ export function ShipmentRiskForm({ onSaveShipment, addToast }) {
   const [isMlLoading, setIsMlLoading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const [activeTab, setActiveTab] = useState('prediction'); // 'prediction' | 'map'
 
   // Fallback heuristic model
   const heuristicAnalysis = useDelayPredictor(formData);
@@ -469,128 +468,100 @@ export function ShipmentRiskForm({ onSaveShipment, addToast }) {
         >
           {/* Main Risk Exposure Assessment Card */}
           <div className="bg-white rounded-3xl p-6 sm:p-7 border border-orange-200/80 shadow-warm-xl relative overflow-hidden">
-            {/* Top Bar Switcher */}
+            {/* Top Bar */}
             <div className="flex items-center justify-between pb-4 border-b border-orange-100 mb-6">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('prediction')}
-                  className={`px-3 py-1.5 text-xs rounded-xl font-mono font-bold transition-all ${
-                    activeTab === 'prediction'
-                      ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-warm-sm'
-                      : 'text-stone-600 hover:text-stone-900 bg-orange-50'
-                  }`}
-                >
-                  RISK ASSESSMENT
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('map')}
-                  className={`px-3 py-1.5 text-xs rounded-xl font-mono font-bold transition-all ${
-                    activeTab === 'map'
-                      ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-warm-sm'
-                      : 'text-stone-600 hover:text-stone-900 bg-orange-50'
-                  }`}
-                >
-                  LIVE CORRIDOR MAP
-                </button>
-              </div>
+              <span className="px-3.5 py-1.5 text-xs rounded-xl font-mono font-bold bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-warm-sm">
+                RISK ASSESSMENT
+              </span>
 
               <span className="text-[11px] font-mono text-orange-600 font-bold">
                 {formData.shipmentCode}
               </span>
             </div>
 
-            {activeTab === 'prediction' ? (
-              <div className="space-y-6">
-                {/* Circular Score & Risk Badge */}
-                <div className="text-center py-2">
-                  <div className="relative inline-flex items-center justify-center">
-                    <svg className="w-36 h-36 transform -rotate-90">
-                      <circle
-                        cx="72"
-                        cy="72"
-                        r="60"
-                        stroke="#FFEDD5"
-                        strokeWidth="11"
-                        fill="transparent"
-                      />
-                      <circle
-                        cx="72"
-                        cy="72"
-                        r="60"
-                        stroke={riskColor}
-                        strokeWidth="11"
-                        strokeDasharray={377}
-                        strokeDashoffset={377 - (377 * effectiveScore) / 100}
-                        strokeLinecap="round"
-                        fill="transparent"
-                        className="transition-all duration-1000 ease-out"
-                      />
-                    </svg>
-                    <div className="absolute flex flex-col items-center">
-                      <span className="text-3xl font-display font-black text-stone-900">{effectiveScore}%</span>
-                      <span className="text-[9px] font-mono uppercase text-stone-500 font-bold">RISK SCORE</span>
-                    </div>
-                  </div>
-
-                  <div className="mt-3">
-                    <span 
-                      className="px-4 py-1.5 rounded-full text-xs font-mono font-bold uppercase tracking-wider inline-block shadow-sm"
-                      style={{
-                        backgroundColor: `${riskColor}15`,
-                        color: riskColor,
-                        border: `1.5px solid ${riskColor}50`
-                      }}
-                    >
-                      {effectiveRiskLevel.toUpperCase()} RISK EXPOSURE
-                    </span>
-                    {effectiveConfidence && (
-                      <div className="text-xs font-mono text-stone-500 mt-2">
-                        Model Confidence: <span className="text-orange-600 font-bold">{(effectiveConfidence * 100).toFixed(1)}%</span>
-                      </div>
-                    )}
+            <div className="space-y-6">
+              {/* Circular Score & Risk Badge */}
+              <div className="text-center py-2">
+                <div className="relative inline-flex items-center justify-center">
+                  <svg className="w-36 h-36 transform -rotate-90">
+                    <circle
+                      cx="72"
+                      cy="72"
+                      r="60"
+                      stroke="#FFEDD5"
+                      strokeWidth="11"
+                      fill="transparent"
+                    />
+                    <circle
+                      cx="72"
+                      cy="72"
+                      r="60"
+                      stroke={riskColor}
+                      strokeWidth="11"
+                      strokeDasharray={377}
+                      strokeDashoffset={377 - (377 * effectiveScore) / 100}
+                      strokeLinecap="round"
+                      fill="transparent"
+                      className="transition-all duration-1000 ease-out"
+                    />
+                  </svg>
+                  <div className="absolute flex flex-col items-center">
+                    <span className="text-3xl font-display font-black text-stone-900">{effectiveScore}%</span>
+                    <span className="text-[9px] font-mono uppercase text-stone-500 font-bold">RISK SCORE</span>
                   </div>
                 </div>
 
-                {/* Delay & Duration Metric Boxes */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3.5 rounded-2xl bg-orange-50/70 border border-orange-100">
-                    <span className="text-[10px] font-mono text-stone-500 font-bold uppercase">ESTIMATED DELAY</span>
-                    <div className="text-xl font-display font-bold text-orange-600 mt-1">
-                      +{effectiveDelayHours} <span className="text-xs font-normal">HRS</span>
+                <div className="mt-3">
+                  <span 
+                    className="px-4 py-1.5 rounded-full text-xs font-mono font-bold uppercase tracking-wider inline-block shadow-sm"
+                    style={{
+                      backgroundColor: `${riskColor}15`,
+                      color: riskColor,
+                      border: `1.5px solid ${riskColor}50`
+                    }}
+                  >
+                    {effectiveRiskLevel.toUpperCase()} RISK EXPOSURE
+                  </span>
+                  {effectiveConfidence && (
+                    <div className="text-xs font-mono text-stone-500 mt-2">
+                      Model Confidence: <span className="text-orange-600 font-bold">{(effectiveConfidence * 100).toFixed(1)}%</span>
                     </div>
-                    <span className="text-[10px] text-stone-500 font-mono">
-                      ≈ {(effectiveDelayHours / 24).toFixed(1)} Days
-                    </span>
-                  </div>
-
-                  <div className="p-3.5 rounded-2xl bg-orange-50/70 border border-orange-100">
-                    <span className="text-[10px] font-mono text-stone-500 font-bold uppercase">TOTAL DURATION</span>
-                    <div className="text-xl font-display font-bold text-stone-900 mt-1">
-                      {Math.round(((Number(formData.distance) / (formData.transportMode === 'air' ? 550 : formData.transportMode === 'rail' ? 45 : formData.transportMode === 'maritime' ? 25 : 65)) + effectiveDelayHours) * 10) / 10} <span className="text-xs font-normal">HRS</span>
-                    </div>
-                    <span className="text-[10px] text-orange-600 font-mono font-semibold">Base + Predicted Delay</span>
-                  </div>
-                </div>
-
-                {/* AI Action Recommendation Box */}
-                <div className="p-4 rounded-2xl bg-gradient-to-r from-orange-50/80 to-amber-50/80 border border-orange-200">
-                  <div className="flex items-center gap-2 text-orange-700 text-xs font-mono font-bold uppercase mb-2">
-                    <Sparkles size={13} className="text-orange-500 animate-pulse" />
-                    AI DISPATCH RECOMMENDATION
-                  </div>
-                  <p className="text-xs text-stone-700 leading-relaxed font-sans">
-                    {effectiveRecommendation}
-                  </p>
+                  )}
                 </div>
               </div>
-            ) : (
-              /* Inline Live Corridor Map */
-              <div className="space-y-4">
-                <InteractiveRouteMap currentShipment={formData} activeRisk={effectiveRiskLevel} />
+
+              {/* Delay & Duration Metric Boxes */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3.5 rounded-2xl bg-orange-50/70 border border-orange-100">
+                  <span className="text-[10px] font-mono text-stone-500 font-bold uppercase">ESTIMATED DELAY</span>
+                  <div className="text-xl font-display font-bold text-orange-600 mt-1">
+                    +{effectiveDelayHours} <span className="text-xs font-normal">HRS</span>
+                  </div>
+                  <span className="text-[10px] text-stone-500 font-mono">
+                    ≈ {(effectiveDelayHours / 24).toFixed(1)} Days
+                  </span>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-orange-50/70 border border-orange-100">
+                  <span className="text-[10px] font-mono text-stone-500 font-bold uppercase">TOTAL DURATION</span>
+                  <div className="text-xl font-display font-bold text-stone-900 mt-1">
+                    {Math.round(((Number(formData.distance) / (formData.transportMode === 'air' ? 550 : formData.transportMode === 'rail' ? 45 : formData.transportMode === 'maritime' ? 25 : 65)) + effectiveDelayHours) * 10) / 10} <span className="text-xs font-normal">HRS</span>
+                  </div>
+                  <span className="text-[10px] text-orange-600 font-mono font-semibold">Base + Predicted Delay</span>
+                </div>
               </div>
-            )}
+
+              {/* AI Action Recommendation Box */}
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-orange-50/80 to-amber-50/80 border border-orange-200">
+                <div className="flex items-center gap-2 text-orange-700 text-xs font-mono font-bold uppercase mb-2">
+                  <Sparkles size={13} className="text-orange-500 animate-pulse" />
+                  AI DISPATCH RECOMMENDATION
+                </div>
+                <p className="text-xs text-stone-700 leading-relaxed font-sans">
+                  {effectiveRecommendation}
+                </p>
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>

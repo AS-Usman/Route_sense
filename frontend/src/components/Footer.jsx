@@ -78,7 +78,7 @@ export function Footer() {
             <ul className="space-y-2 text-xs text-stone-600">
               <li><a href="/predictor.html" className="hover:text-orange-600 transition-colors">Risk Predictor</a></li>
               <li><a href="/dashboard.html" className="hover:text-orange-600 transition-colors">Operations Control</a></li>
-              <li><a href="/shipments.html" className="hover:text-orange-600 transition-colors">Satellite Corridor Map</a></li>
+              <li><a href="/shipments.html" className="hover:text-orange-600 transition-colors">Active Shipments</a></li>
               <li><a href="/dashboard.html#analytics" className="hover:text-orange-600 transition-colors">Telemetry Analytics</a></li>
             </ul>
           </div>
